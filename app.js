@@ -1,5 +1,27 @@
 const cols = document.querySelectorAll('.col')
 
+document.addEventListener('keydown', event => {
+  event.preventDefault()
+  if (event.code.toLowerCase() === 'space') {
+    setRandomColors()
+  }
+})
+
+document.addEventListener('click', event => {
+  const type = event.target.dataset.type
+
+  if (type === 'pulse') {
+    const node = event.target.tagName.toLowerCase() === 'i'
+      ? event.target
+      : event.target.chidren[0]
+
+    node.classList.toggle('fa-heart')
+    node.classList.toggle('fa-heart-pulse')
+  } else if (type === 'copy') {
+    copyToClickboard(event.target.textContent)
+
+  }
+})
 
 function generateRandomeColor() {
   // RGB
@@ -15,29 +37,72 @@ function generateRandomeColor() {
   return '#' + color
 }
 
-function setRandomColors() {
-  cols.forEach((col) => {
+function copyToClickboard(text) {
+  return navigator.clipboard.writeText(text)
+
+}
+
+function setRandomColors(isInitial) {
+  const colors = isInitial ? getColorsFromHash() : []
+
+
+  cols.forEach((col, index) => {
+    const isLocked = col.querySelector('i').classList.contains('fa-heart-pulse')
     const text = col.querySelector('h2')
-    const color = chroma.random()
+    const button = col.querySelector('button')
+
+
+    if (isLocked) {
+      colors.push(textContent)
+      return
+    }
+
+    const color = isInitial
+      ? colors[index]
+        ? colors[index]
+        : chroma.random()
+      : chroma.random()
+
+    if (!isInitial) {
+      colors.push(color)
+    }
+
+    colors.push(color)
 
     text.textContent = color
     col.style.background = color
 
     setTextColor(text, color)
-
+    setTextColor(button, color)
   })
+  updateColorsHash(colors)
 }
 
 function setTextColor(text, color) {
   const luminance = chroma(color).luminance()
   text.style.color = luminance > 0.5 ? 'black' : 'white'
+}
 
+function updateColorsHash(colors = []) {
+  document.location.hash = colors
+    .map((col) => {
 
+      return col.toString().substring(1)
+    }).join('-')
+}
 
+function getColorsFromHash() {
+  if (document.location.hash.length > 1) {
+    return document.location.hash
+      .substring(1)
+      .split('-')
+      .map((color) => '#' + color)
+
+  }
+  return []
 
 }
 
 
 
-
-setRandomColors()
+setRandomColors(true)
