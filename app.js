@@ -13,7 +13,7 @@ document.addEventListener('click', event => {
   if (type === 'pulse') {
     const node = event.target.tagName.toLowerCase() === 'i'
       ? event.target
-      : event.target.chidren[0]
+      : event.target.chidren[1]
 
     node.classList.toggle('fa-heart')
     node.classList.toggle('fa-heart-pulse')
@@ -53,7 +53,7 @@ function setRandomColors(isInitial) {
 
 
     if (isLocked) {
-      colors.push(textContent)
+      colors.push(text.textContent)
       return
     }
 
